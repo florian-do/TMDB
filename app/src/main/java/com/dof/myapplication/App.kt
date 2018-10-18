@@ -20,8 +20,8 @@ class App : Application() {
 
         /**
          *
-         .baseUrl(EcashClient.getApiUrl())
-        .client(new EcashClient().get(EcashClient.TIMEOUT))
+         .baseUrl(t.getApiUrl())
+        .client(new t().get(EcashClient.TIMEOUT))
         .addConverterFactory(GsonConverterFactory.create())
         .build();
          */
