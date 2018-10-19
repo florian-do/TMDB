@@ -1,6 +1,7 @@
 package com.dof.myapplication
 
 import android.app.Application
+import com.dof.myapplication.repository.RepositoryFactory
 import com.dof.myapplication.service.TMDBClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -8,6 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class App : Application() {
 
     var retrofit: Retrofit? = null
+    var repoFactory: RepositoryFactory = RepositoryFactory()
 
     override fun onCreate() {
         super.onCreate()
@@ -16,14 +18,5 @@ class App : Application() {
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(TMDBClient.HOSTNAME)
                 .build()
-
-
-        /**
-         *
-         .baseUrl(t.getApiUrl())
-        .client(new t().get(EcashClient.TIMEOUT))
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
-         */
     }
 }
