@@ -8,15 +8,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class App : Application() {
 
-    var retrofit: Retrofit? = null
-    var repoFactory: RepositoryFactory = RepositoryFactory()
+    companion object {
+        var repoFactory: RepositoryFactory = RepositoryFactory()
+        var retrofit: Retrofit = Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(TMDBClient.HOSTNAME)
+                .client(TMDBClient().get())
+                .build()
+    }
 
     override fun onCreate() {
         super.onCreate()
-
-        retrofit = Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(TMDBClient.HOSTNAME)
-                .build()
     }
 }

@@ -1,16 +1,21 @@
 package com.dof.myapplication.ui.main
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dof.myapplication.R
 import com.dof.myapplication.databinding.MainFragmentBinding
+import com.dof.myapplication.repository.DiscoverRepo
 
 class MainFragment : Fragment() {
+
+    private val TAG = "MainFragment"
 
     companion object {
         fun newInstance() = MainFragment()
@@ -52,6 +57,20 @@ class MainFragment : Fragment() {
         for (i in originalList) {
             println(i)
         }
+
+
+        val repo : DiscoverRepo = DiscoverRepo()
+        repo.getDiscover().observe(this,  Observer {
+            Log.d(TAG, ""+it?.page)
+            Log.d(TAG, ""+it?.total_pages)
+            Log.d(TAG, ""+it?.total_results)
+            Log.d(TAG, ""+it?.results?.size)
+            if (it != null) {
+
+            } else {
+
+            }
+        })
     }
 
     fun test(x: Any) {
