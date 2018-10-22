@@ -5,11 +5,13 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dof.myapplication.R
+import com.dof.myapplication.adapter.DiscoverAdapter
 import com.dof.myapplication.databinding.MainFragmentBinding
 import com.dof.myapplication.repository.DiscoverRepo
 
@@ -41,6 +43,7 @@ class MainFragment : Fragment() {
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         binding.vm = viewModel
         viewModel.amount.set("test")
+
         test(1)
         test(viewModel)
         test("test")
@@ -65,6 +68,10 @@ class MainFragment : Fragment() {
             Log.d(TAG, ""+it?.total_pages)
             Log.d(TAG, ""+it?.total_results)
             Log.d(TAG, ""+it?.results?.size)
+            val adapter = DiscoverAdapter(context!!, it?.results)
+            binding.rvFeed.layoutManager = GridLayoutManager(context, 3)
+            binding.rvFeed.setHasFixedSize(true)
+            binding.rvFeed.adapter = adapter
             if (it != null) {
 
             } else {
