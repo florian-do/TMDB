@@ -4,10 +4,10 @@ data class DiscoverReponse(
     val page: Int,
     val total_results: Int,
     val total_pages: Int,
-    val results: List<Result>
+    val results: List<Discover>
 )
 
-data class Result(
+data class Discover(
     val vote_count: Int,
     val id: Int,
     val video: Boolean,
