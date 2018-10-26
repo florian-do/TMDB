@@ -1,22 +1,35 @@
 package com.dof.myapplication.datasource
 
-import android.arch.lifecycle.Observer
 import android.arch.paging.PageKeyedDataSource
 import android.util.Log
-import com.dof.myapplication.repository.DiscoverRepo
+import com.dof.myapplication.service.DiscoverService
+import com.dof.myapplication.service.TMDBClient
 import com.dof.myapplication.service.model.Discover
-import com.dof.myapplication.ui.main.MainFragment
+import com.dof.myapplication.service.model.DiscoverReponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class SequentialDataSource(val c : MainFragment, val repo : DiscoverRepo) : PageKeyedDataSource<Int, Discover>() {
+class SequentialDataSource(val api : DiscoverService) : PageKeyedDataSource<Int, Discover>() {
 
     private val TAG = "SequentialDataSource"
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Discover>) {
-        Log.d(TAG, "loadInitial: ")
-        repo.getDiscover().observe(c, Observer {
-            Log.d(TAG, "OK: "+it?.page)
-            Log.d(TAG, "OK: "+it?.results?.size)
-            callback.onResult(it?.results.orEmpty(), null, 2)
+
+        api.getDiscover(TMDBClient.API_KEY).enqueue(object : Callback<DiscoverReponse> {
+            override fun onFailure(call: Call<DiscoverReponse>, t: Throwable) {
+                Log.d(TAG, ": FAIL")
+            }
+
+            override fun onResponse(call: Call<DiscoverReponse>, response: Response<DiscoverReponse>) {
+                Log.d(TAG, ": response code -> "+response.code())
+                val it = response.body();
+                Log.d(TAG, "list size: "+it?.results?.size)
+
+                response.body()?.let {
+                    callback.onResult(it.results, null, 2)
+                }
+            }
         })
     }
 

@@ -1,15 +1,9 @@
 package com.dof.myapplication.ui.main
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.arch.paging.DataSource
-import android.arch.paging.LivePagedListBuilder
-import android.arch.paging.PagedList
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.support.v4.app.Fragment
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.GridLayoutManager
@@ -20,11 +14,7 @@ import android.view.ViewGroup
 import com.dof.myapplication.R
 import com.dof.myapplication.adapter.DiscoverAdapter
 import com.dof.myapplication.databinding.MainFragmentBinding
-import com.dof.myapplication.datasource.SequentialDataSource
-import com.dof.myapplication.repository.DiscoverRepo
 import com.dof.myapplication.service.model.Discover
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 class MainFragment : Fragment() {
 
@@ -72,30 +62,14 @@ class MainFragment : Fragment() {
             println(i)
         }
 
-        val config = PagedList.Config.Builder()
-                .setPageSize(20)
-                .setInitialLoadSizeHint(20)
-                .build()
-
-//        val pagedList = LivePagedListBuilder<Int, Discover>(SequentialDataSource(this, DiscoverRepo()), config)
-//                .setNotifyExecutor(UiThreadExecutor())
-//                .setFetchExecutor(BackgroundThreadExecutor())
-//                .build()
-
-        val mock = MockNotesDataSourceFactory(SequentialDataSource(this, DiscoverRepo()))
-        val test : LiveData<PagedList<Discover>> = LivePagedListBuilder<Int, Discover>(mock, config).build()
         val adapter = DiscoverAdapter(context!!, diffCallBack)
         binding.rvFeed.layoutManager = GridLayoutManager(context, 3)
         binding.rvFeed.setHasFixedSize(true)
         binding.rvFeed.adapter = adapter
 
-        test.observe(this, Observer { it ->
-            Log.d(TAG, ": "+it?.size)
-            it?.let {
-                Log.d(TAG, ": "+ it.size)
-                adapter.submitList(it)
-            }
-        })
+//        viewModel.data.observe(this, Observer {
+//            Log.d(TAG, ": observe "+it?.size)
+//        })
     }
 
     fun test(x: Any) {
@@ -103,26 +77,6 @@ class MainFragment : Fragment() {
             is Int -> println("INT")
             is String -> println("STRING")
             else -> println("TAMERE")
-        }
-    }
-
-    class MockNotesDataSourceFactory(val dataSource: SequentialDataSource) : DataSource.Factory<Int, Discover>() {
-        override fun create(): DataSource<Int, Discover> = dataSource
-    }
-
-    internal inner class UiThreadExecutor : Executor {
-        private val mHandler = Handler(Looper.getMainLooper())
-
-        override fun execute(command: Runnable) {
-            mHandler.post(command)
-        }
-    }
-
-    internal inner class BackgroundThreadExecutor : Executor {
-        private val executorService = Executors.newFixedThreadPool(3)
-
-        override fun execute(command: Runnable) {
-            executorService.execute(command)
         }
     }
 
