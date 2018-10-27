@@ -42,9 +42,18 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        binding.vm = viewModel
-        viewModel.amount.set("test")
 
+        val adapter = DiscoverAdapter(context!!, diffCallBack)
+        binding.rvFeed.layoutManager = GridLayoutManager(context, 3)
+        binding.rvFeed.setHasFixedSize(true)
+        binding.rvFeed.adapter = adapter
+
+        viewModel.data.observe(this, Observer {
+            Log.d(TAG, ": observe "+it?.size)
+        })
+    }
+
+    fun poubelle() {
         test(1)
         test(viewModel)
         test("test")
@@ -62,14 +71,6 @@ class MainFragment : Fragment() {
             println(i)
         }
 
-        val adapter = DiscoverAdapter(context!!, diffCallBack)
-        binding.rvFeed.layoutManager = GridLayoutManager(context, 3)
-        binding.rvFeed.setHasFixedSize(true)
-        binding.rvFeed.adapter = adapter
-
-//        viewModel.data.observe(this, Observer {
-//            Log.d(TAG, ": observe "+it?.size)
-//        })
     }
 
     fun test(x: Any) {

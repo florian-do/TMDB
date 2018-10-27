@@ -16,8 +16,4 @@ class App : Application() {
                 .client(TMDBClient().get())
                 .build()
     }
-
-    override fun onCreate() {
-        super.onCreate()
-    }
 }
