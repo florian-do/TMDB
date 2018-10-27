@@ -14,13 +14,11 @@ import com.dof.myapplication.databinding.AdapterDiscoverBinding
 import com.dof.myapplication.module.GlideApp
 import com.dof.myapplication.service.model.Discover
 
-class DiscoverAdapter(val context: Context, diffCallBack : DiffUtil.ItemCallback<Discover?>)
-    : PagedListAdapter<Discover, DiscoverAdapter.ViewHolder>(diffCallBack) {
+class DiscoverAdapter(val context: Context) : PagedListAdapter<Discover, DiscoverAdapter.ViewHolder>(diffCallBack) {
 
     private val TAG = "DiscoverAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Log.d(TAG, "onCreateViewHolder: ")
         val binding : AdapterDiscoverBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
                 R.layout.adapter_discover,
@@ -32,9 +30,7 @@ class DiscoverAdapter(val context: Context, diffCallBack : DiffUtil.ItemCallback
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.d(TAG, "onBindViewHolder: "+position)
         getItem(position)?.let {
-            Log.d(TAG, "onBindViewHolder: let : "+it.poster_path)
             GlideApp.with(context)
                     .load(Const.URL_PHOTO+it.poster_path)
                     .fitCenter()
@@ -43,4 +39,21 @@ class DiscoverAdapter(val context: Context, diffCallBack : DiffUtil.ItemCallback
     }
 
     class ViewHolder(val binding: AdapterDiscoverBinding) : RecyclerView.ViewHolder(binding.root)
+
+    companion object {
+        val diffCallBack = object : DiffUtil.ItemCallback<Discover?>() {
+
+            override fun areItemsTheSame(oldItem: Discover?, newItem: Discover?): Boolean {
+                Log.d("DiffUtil.ItemCallback", "areItemsTheSame: ")
+                if (oldItem == null || newItem == null) return false
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(oldItem: Discover?, newItem: Discover?): Boolean {
+                Log.d("DiffUtil.ItemCallback", "areContentsTheSame: ")
+                if (oldItem == null || newItem == null) return false
+                return oldItem.id == newItem.id
+            }
+        }
+    }
 }

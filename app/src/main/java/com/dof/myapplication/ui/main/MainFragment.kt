@@ -6,7 +6,9 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.util.DiffUtil
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,11 @@ import com.dof.myapplication.R
 import com.dof.myapplication.adapter.DiscoverAdapter
 import com.dof.myapplication.databinding.MainFragmentBinding
 import com.dof.myapplication.service.model.Discover
+import com.google.android.flexbox.JustifyContent
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayoutManager
+
+
 
 class MainFragment : Fragment() {
 
@@ -26,6 +33,7 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var binding : MainFragmentBinding
+    private lateinit var adapter : DiscoverAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -43,13 +51,14 @@ class MainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        val adapter = DiscoverAdapter(context!!, diffCallBack)
-        binding.rvFeed.layoutManager = GridLayoutManager(context, 3)
-        binding.rvFeed.setHasFixedSize(true)
+        adapter = DiscoverAdapter(context!!)
+        binding.rvFeed.layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
+//        binding.rvFeed.setHasFixedSize(true)
         binding.rvFeed.adapter = adapter
 
         viewModel.data.observe(this, Observer {
-            Log.d(TAG, ": observe "+it?.size)
+            Log.d(TAG, ": ${it?.size}")
+            adapter.submitList(it)
         })
     }
 
@@ -78,21 +87,6 @@ class MainFragment : Fragment() {
             is Int -> println("INT")
             is String -> println("STRING")
             else -> println("TAMERE")
-        }
-    }
-
-    val diffCallBack = object : DiffUtil.ItemCallback<Discover?>() {
-
-        override fun areItemsTheSame(oldItem: Discover?, newItem: Discover?): Boolean {
-            Log.d(TAG, "areItemsTheSame: ")
-            if (oldItem == null || newItem == null) return false
-            return oldItem == newItem
-        }
-
-        override fun areContentsTheSame(oldItem: Discover?, newItem: Discover?): Boolean {
-            Log.d(TAG, "areContentsTheSame: ")
-            if (oldItem == null || newItem == null) return false
-            return oldItem.id == newItem.id
         }
     }
 }

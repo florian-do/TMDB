@@ -25,18 +25,18 @@ class DiscoverRepo() : Repository {
         val data : MutableLiveData<DiscoverReponse>? = MutableLiveData()
         Log.d(TAG, ": getDiscover")
 
-        api.getDiscover(TMDBClient.API_KEY).enqueue(object : Callback<DiscoverReponse> {
-            override fun onFailure(call: Call<DiscoverReponse>, t: Throwable) {
-                Log.d(TAG, ": FAIL")
-                data?.value = null
-            }
-
-            override fun onResponse(call: Call<DiscoverReponse>, response: Response<DiscoverReponse>) {
-                Log.d(TAG, ": OK -> "+response.code())
-                data?.value = response.body()
-            }
-
-        })
+//        api.getDiscover(TMDBClient.API_KEY).enqueue(object : Callback<DiscoverReponse> {
+//            override fun onFailure(call: Call<DiscoverReponse>, t: Throwable) {
+//                Log.d(TAG, ": FAIL")
+//                data?.value = null
+//            }
+//
+//            override fun onResponse(call: Call<DiscoverReponse>, response: Response<DiscoverReponse>) {
+//                Log.d(TAG, ": OK -> "+response.code())
+//                data?.value = response.body()
+//            }
+//
+//        })
 
         return data!!
     }

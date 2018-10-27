@@ -24,7 +24,9 @@ class SequentialDataSource(val api : DiscoverService) : PageKeyedDataSource<Int,
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Discover>) {
         Log.d(TAG, "loadAfter: "+params.key)
-
+        callAPI(params.key, params.requestedLoadSize) { repos, next ->
+            callback.onResult(repos, next)
+        }
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Discover>) {
@@ -32,25 +34,11 @@ class SequentialDataSource(val api : DiscoverService) : PageKeyedDataSource<Int,
     }
 
     private fun callAPI(page: Int, perPage: Int, callback: (repos: List<Discover>, next: Int?) -> Unit) {
-//        api.getDiscover(TMDBClient.API_KEY).enqueue(object : Callback<DiscoverReponse> {
-//            override fun onFailure(call: Call<DiscoverReponse>, t: Throwable) {
-//                Log.d(TAG, ": FAIL")
-//            }
-//
-//            override fun onResponse(call: Call<DiscoverReponse>, response: Response<DiscoverReponse>) {
-//                Log.d(TAG, ": response code -> "+response.code())
-//                response.body()?.let {
-//                    Log.d(TAG, "list size: "+it.results.size)
-//                    callback(it.results, null)
-//                }
-//            }
-//        })
-
         try {
-            val response = api.getDiscover(TMDBClient.API_KEY).execute()
+            val response = api.getDiscover(TMDBClient.API_KEY, page).execute()
 
             response.body()?.let {
-                val next: Int? = null
+                val next: Int = it.page + 1
                 callback(it.results, next)
             }
         } catch (e: IOException) {
