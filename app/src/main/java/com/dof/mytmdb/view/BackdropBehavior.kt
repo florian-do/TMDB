@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dof.mytmdb.R
+import kotlin.math.min
 
 class BackdropBehavior : CoordinatorLayout.Behavior<View> {
 
@@ -31,7 +32,15 @@ class BackdropBehavior : CoordinatorLayout.Behavior<View> {
     private var backContainerId : Int ?= null
     private var toolbarId : Int ?= null
 
-    private var state : DropState = DEFAULT_STATE
+    var state : DropState = DEFAULT_STATE
+    var minHeight : Float = 0F
+    var maxHeight : Float = 0F
+    var midHeight : Float = 0F
+
+    var startY1 : Float = 0F
+    var startY2 : Float = 0F
+    var endY1 : Float = 0F
+    var endY2 : Float = 0F
 
     constructor() : super()
 
@@ -55,6 +64,21 @@ class BackdropBehavior : CoordinatorLayout.Behavior<View> {
         }
 
         if (toolbar != null && backContainer != null) {
+            if (minHeight == 0F)
+                minHeight = child.y
+            maxHeight = child.y + backContainer!!.height
+            if (backContainer!!.height >= 0)
+                midHeight = ((backContainer!!.height / 2) + toolbar!!.height).toFloat()
+
+            startY1 = backContainer!!.y - 100
+            startY2 = backContainer!!.y + 100
+
+            endY1 = (backContainer!!.y + backContainer!!.height) - 100
+            endY2 = (backContainer!!.y + backContainer!!.height) + 100
+
+            Log.d(TAG, "start ${startY1} to ${startY2} ")
+            Log.d(TAG, "end ${endY1} to ${endY2} ")
+
             initViews(parent, child, toolbar!!, backContainer!!)
         }
 
@@ -63,10 +87,35 @@ class BackdropBehavior : CoordinatorLayout.Behavior<View> {
 
     fun close() {
         if (state == DropState.CLOSE)
-            return ;
+            return
 
         state = DropState.CLOSE
         onDrawDrop(child!!, backContainer!!, toolbar!!)
+    }
+
+    fun open() {
+        if (state == DropState.OPEN)
+            return
+
+        state = DropState.OPEN
+        onDrawDrop(child!!, backContainer!!, toolbar!!)
+    }
+
+    fun forceClose() {
+        state = DropState.CLOSE
+        onDrawDrop(child!!, backContainer!!, toolbar!!)
+    }
+
+    fun forceOpen() {
+        state = DropState.OPEN
+        onDrawDrop(child!!, backContainer!!, toolbar!!)
+    }
+
+    fun replaceView(currentYPos: Float) {
+        if (currentYPos >= midHeight)
+            forceOpen()
+        else
+            forceClose()
     }
 
     private fun initViews(parent: CoordinatorLayout, child: View, toolbar: Toolbar, backContainer: View) {
@@ -100,7 +149,7 @@ class BackdropBehavior : CoordinatorLayout.Behavior<View> {
     }
 
     private fun drawOpenedState(child: View, backContainer: View, drawAnimation : Boolean = true) {
-        val position = child.y + backContainer.height
+        val position = backContainer.y + backContainer.height
         val duration = if (drawAnimation) DURATION_TIME else NO_DURATION
 
         child.animate().y(position).setDuration(duration).start()
