@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import com.dof.mytmdb.R
 import com.dof.mytmdb.adapter.DiscoverAdapter
 import com.dof.mytmdb.databinding.DiscoverFragmentBinding
+import com.dof.mytmdb.viewmodel.DiscoverViewModel
 
 class DiscoverFragment : Fragment() {
 
@@ -70,7 +71,6 @@ class DiscoverFragment : Fragment() {
         for (i in originalList) {
             println(i)
         }
-
     }
 
     fun test(x: Any) {

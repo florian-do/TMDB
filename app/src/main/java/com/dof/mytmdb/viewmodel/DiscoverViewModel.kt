@@ -1,4 +1,4 @@
-package com.dof.mytmdb.ui.main
+package com.dof.mytmdb.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel

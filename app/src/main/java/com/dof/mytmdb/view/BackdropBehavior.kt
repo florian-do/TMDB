@@ -8,7 +8,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dof.mytmdb.R
-import kotlin.math.min
 
 class BackdropBehavior : CoordinatorLayout.Behavior<View> {
 
@@ -70,10 +69,10 @@ class BackdropBehavior : CoordinatorLayout.Behavior<View> {
             if (backContainer!!.height >= 0)
                 midHeight = ((backContainer!!.height / 2) + toolbar!!.height).toFloat()
 
-            startY1 = backContainer!!.y - 100
+            startY1 = backContainer!!.y - 150
             startY2 = backContainer!!.y + 100
 
-            endY1 = (backContainer!!.y + backContainer!!.height) - 100
+            endY1 = (backContainer!!.y + backContainer!!.height) - 150
             endY2 = (backContainer!!.y + backContainer!!.height) + 100
 
             Log.d(TAG, "start ${startY1} to ${startY2} ")

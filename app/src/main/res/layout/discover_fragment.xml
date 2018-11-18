@@ -6,7 +6,7 @@
     <data>
         <variable
             name="vm"
-            type="com.dof.mytmdb.ui.main.DiscoverViewModel" />
+            type="com.dof.mytmdb.viewmodel.DiscoverViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout

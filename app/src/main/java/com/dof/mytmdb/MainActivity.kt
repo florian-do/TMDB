@@ -102,7 +102,6 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener,
     override fun onScroll(event1: MotionEvent, event2: MotionEvent,
             distanceX: Float, distanceY: Float): Boolean {
 
-
         Log.d(TAG, "${event1.y} => ${backdropBehavior.endY1} && ${event1.y} <= ${backdropBehavior.endY2}")
 
         if (event1.y >= backdropBehavior.startY1
@@ -120,8 +119,6 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener,
             if (currentYPos >= backdropBehavior.minHeight && currentYPos <= backdropBehavior.maxHeight) {
                 frontContainer.y = currentYPos
             }
-
-
         } else if (event1.y >= backdropBehavior.endY1
                 && event1.y <= backdropBehavior.endY2
                 && backdropBehavior.state == BackdropBehavior.DropState.OPEN) {
