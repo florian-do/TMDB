@@ -10,9 +10,9 @@ class TMDBClient {
         const val HOSTNAME : String = "https://api.themoviedb.org/3/"
 
         const val DISCOVER_ROUTE : String = "discover/movie"
+        const val MOVIE_ROUTE : String = "movie/{movie_id}"
         const val API_KEY : String = "b4dc27fb266e43bbef9756317657c40f"
     }
-
 
     fun get() : OkHttpClient {
         return OkHttpClient.Builder()

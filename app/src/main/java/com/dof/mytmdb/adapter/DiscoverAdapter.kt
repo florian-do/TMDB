@@ -7,16 +7,19 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import com.dof.mytmdb.Const
 import com.dof.mytmdb.R
 import com.dof.mytmdb.databinding.AdapterDiscoverBinding
+import com.dof.mytmdb.listener.onRowListener
 import com.dof.mytmdb.module.GlideApp
 import com.dof.mytmdb.service.model.Discover
 
 class DiscoverAdapter(val context: Context) : PagedListAdapter<Discover, DiscoverAdapter.ViewHolder>(diffCallBack) {
 
     private val TAG = "DiscoverAdapter"
+    var mListener : onRowListener<Discover> ?= null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding : AdapterDiscoverBinding = DataBindingUtil.inflate(
@@ -31,10 +34,16 @@ class DiscoverAdapter(val context: Context) : PagedListAdapter<Discover, Discove
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         getItem(position)?.let {
+            val data : Discover = it
             GlideApp.with(context)
                     .load(Const.URL_PHOTO+it.poster_path)
                     .fitCenter()
                     .into(holder.binding.cover)
+            holder.binding.root.setOnClickListener {
+                mListener.let {
+                    mListener?.onRowClick(data)
+                }
+            }
         }
     }
 

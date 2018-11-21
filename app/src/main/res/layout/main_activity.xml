@@ -43,7 +43,6 @@
         android:background="@drawable/background_container"
         android:clickable="true"
         android:focusable="true"
-        app:elevation="8dp"
         app:layout_behavior="com.dof.mytmdb.view.BackdropBehavior"
         tools:layout_marginTop="110dp"/>
 

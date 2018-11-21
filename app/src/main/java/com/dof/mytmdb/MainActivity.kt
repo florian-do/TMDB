@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener,
         }
 
         backdropBehavior = frontContainer.findBehavior()
-
         with(backdropBehavior) {
             attachBackContainer(R.id.backContainer)
             attachToolbar(R.id.toolbar)

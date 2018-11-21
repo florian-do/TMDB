@@ -1,5 +1,6 @@
 package com.dof.mytmdb.ui.main
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
@@ -13,9 +14,11 @@ import android.view.ViewGroup
 import com.dof.mytmdb.R
 import com.dof.mytmdb.adapter.DiscoverAdapter
 import com.dof.mytmdb.databinding.DiscoverFragmentBinding
+import com.dof.mytmdb.listener.onRowListener
+import com.dof.mytmdb.service.model.Discover
 import com.dof.mytmdb.viewmodel.DiscoverViewModel
 
-class DiscoverFragment : Fragment() {
+class DiscoverFragment : Fragment(), onRowListener<Discover> {
 
     private val TAG = "MainFragment"
 
@@ -44,6 +47,7 @@ class DiscoverFragment : Fragment() {
         viewModel = ViewModelProviders.of(this).get(DiscoverViewModel::class.java)
 
         adapter = DiscoverAdapter(context!!)
+        adapter.mListener = this
         binding.rvFeed.layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
 //        binding.rvFeed.setHasFixedSize(true)
         binding.rvFeed.adapter = adapter
@@ -52,6 +56,11 @@ class DiscoverFragment : Fragment() {
             Log.d(TAG, ": ${it?.size}")
             adapter.submitList(it)
         })
+    }
+
+    override fun onRowClick(data: Discover) {
+        Log.d(TAG, "ID ${data.id}")
+        MovieActivity.newActivity(activity as Activity, data.id)
     }
 
     fun poubelle() {
