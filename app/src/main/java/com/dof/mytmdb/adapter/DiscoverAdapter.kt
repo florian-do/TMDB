@@ -3,6 +3,7 @@ package com.dof.mytmdb.adapter
 import android.arch.paging.PagedListAdapter
 import android.content.Context
 import android.databinding.DataBindingUtil
+import android.support.v4.view.ViewCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -40,9 +41,11 @@ class DiscoverAdapter(val context: Context) : PagedListAdapter<Discover, Discove
                     .fitCenter()
                     .into(holder.binding.cover)
 
+            ViewCompat.setTransitionName(holder.binding.cover, it.id.toString());
+
             holder.binding.root.setOnClickListener {
                 mListener.let {
-                    mListener?.onRowClick(data)
+                    mListener?.onRowClick(data, holder.binding.cover)
                 }
             }
         }

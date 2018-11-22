@@ -4,6 +4,7 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -11,10 +12,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import com.dof.mytmdb.Const
 import com.dof.mytmdb.R
 import com.dof.mytmdb.adapter.DiscoverAdapter
 import com.dof.mytmdb.databinding.DiscoverFragmentBinding
 import com.dof.mytmdb.listener.onRowListener
+import com.dof.mytmdb.module.GlideApp
 import com.dof.mytmdb.service.model.Discover
 import com.dof.mytmdb.viewmodel.DiscoverViewModel
 
@@ -58,9 +64,8 @@ class DiscoverFragment : Fragment(), onRowListener<Discover> {
         })
     }
 
-    override fun onRowClick(data: Discover) {
-        Log.d(TAG, "ID ${data.id}")
-        MovieActivity.newActivity(activity as Activity, data.id)
+    override fun onRowClick(data: Discover, imageView: ImageView) {
+        MovieActivity.newActivity(activity as Activity, data.id, imageView)
     }
 
     fun poubelle() {

@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -16,12 +17,19 @@ import android.view.View
 import com.dof.mytmdb.Const
 import com.dof.mytmdb.R
 import com.dof.mytmdb.databinding.ActivityMovieBinding
-import com.dof.mytmdb.module.GlideApp
 import com.dof.mytmdb.viewmodel.MovieViewModel
 import it.sephiroth.android.library.uigestures.UIGestureRecognizer
 import it.sephiroth.android.library.uigestures.UIGestureRecognizerDelegate
 import it.sephiroth.android.library.uigestures.UIPanGestureRecognizer
 import kotlinx.android.synthetic.main.activity_movie.*
+import android.support.v4.view.ViewCompat
+import android.support.v4.app.ActivityOptionsCompat
+import android.widget.ImageView
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.dof.mytmdb.module.GlideApp
 
 class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
         UIGestureRecognizer.OnActionListener {
@@ -39,11 +47,17 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
         private val THRESHOLD_TOOLBAR = 200F
         private val TAG = "MovieActivity"
         private val ARG_ID = "arg_id"
+        private val ARG_TRANSITION = "arg_transition"
 
-        fun newActivity(a: Activity, id: Int) {
+        fun newActivity(a: Activity, id: Int, imgView : ImageView) {
             val intent = Intent(a, MovieActivity::class.java)
             intent.putExtra(ARG_ID, id)
-            a.startActivity(intent)
+            intent.putExtra(ARG_TRANSITION, ViewCompat.getTransitionName(imgView))
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    a, imgView, ViewCompat.getTransitionName(imgView)
+            )
+
+            a.startActivity(intent, options.toBundle())
         }
     }
 
@@ -57,24 +71,44 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
         pan = UIPanGestureRecognizer(this)
         pan.actionListener = this
 
+        val imageTransitionName = intent.extras.getString(ARG_TRANSITION)
+        cover.transitionName = imageTransitionName
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         window.setStatusBarColor(Color.argb(0, 0, 0, 0));
 
         delegate.addGestureRecognizer(pan)
 
-        id = intent.getIntExtra(ARG_ID, 0)
+        id = intent.extras.getInt(ARG_ID, 0)
+        Log.d(TAG, "ID : ${id}")
         viewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
         viewModel.getMovieDetail(id).observe(this, Observer {
             it.let {
                 binding.data = it
-                GlideApp.with(this)
-                        .load(Const.URL_PHOTO_ORIGINAL+it?.backdrop_path)
-                        .into(backDrop)
 
                 GlideApp.with(this)
                         .load(Const.URL_PHOTO+it?.poster_path)
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                    e: GlideException?, model: Any?, target: Target<Drawable>?,
+                                    isFirstResource: Boolean): Boolean {
+                                supportStartPostponedEnterTransition()
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                    resource: Drawable?, model: Any?,
+                                    target: Target<Drawable>?, dataSource: DataSource?,
+                                    isFirstResource: Boolean): Boolean {
+                                supportStartPostponedEnterTransition()
+                                return false
+                            }
+                        })
                         .into(cover)
+
+                GlideApp.with(this)
+                        .load(Const.URL_PHOTO_ORIGINAL+it?.backdrop_path)
+                        .into(backDrop)
 
                 toolbar_title.text = it?.original_title ?: getString(R.string.app_name)
                 Log.d(TAG, " NAME : ${Const.URL_PHOTO+it?.backdrop_path}")
@@ -82,21 +116,18 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
         })
 
         movie_title.viewTreeObserver.addOnGlobalLayoutListener {
-            val location = intArrayOf(0, 0)
-            movie_title.getLocationOnScreen(location)
-            if (movieTitleY == 0)
+            if (movieTitleY == 0) {
+                val location = intArrayOf(0, 0)
+                movie_title.getLocationOnScreen(location)
                 movieTitleY = location[1]
+            }
+
             if (toolbarNotificationHeight == 0)
                 toolbarNotificationHeight = toolbar.height + resources.getDimension(R.dimen.statusBarHeight).toInt()
-
-            Log.d(TAG, "viewTreeObserver ${movieTitleY} / ${toolbarNotificationHeight}")
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             scrollView.setOnScrollChangeListener { view, i1, i2, i3, i4 ->
-
-
-                Log.d(TAG, "${i2} >= ${movieTitleY - toolbarNotificationHeight}")
                 if (i2 >= movieTitleY - toolbarNotificationHeight && i2 <= movieTitleY + THRESHOLD_TOOLBAR) {
                     val tmp = i2 - (movieTitleY - toolbarNotificationHeight)
 

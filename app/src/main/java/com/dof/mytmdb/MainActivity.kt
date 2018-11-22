@@ -52,6 +52,10 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener,
         mDetector.setOnDoubleTapListener(this)
     }
 
+    override fun onStop() {
+        super.onStop()
+        window.setExitTransition(null);
+    }
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
 //        outState?.putInt(SP_LAST_ITEM_USED, navigationView.get)
