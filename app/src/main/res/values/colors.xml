@@ -7,5 +7,7 @@
     <color name="white">#ffffff</color>
     <color name="white_translucent_38">#61ffffff</color>
 
-    <color name="background">#181B20</color>
+    <color name="background">#ee181B20</color>
+    <color name="text_color">#B8C9D4</color>
+    <color name="trailer_button_color">#455565</color>
 </resources>

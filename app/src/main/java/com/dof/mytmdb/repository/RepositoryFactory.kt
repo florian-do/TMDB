@@ -1,9 +1,9 @@
 package com.dof.mytmdb.repository
 
 class RepositoryFactory {
-    var map : MutableMap<Class<Any>, Repository> = mutableMapOf()
+    var map : MutableMap<Class<*>, Repository> = mutableMapOf()
 
-    fun <T> get(c: Class<Any>) : Repository? {
+    fun <T> get(c: Class<*>) : Repository? {
         if (map.containsKey(c)) {
             return map.get(c)
         } else {

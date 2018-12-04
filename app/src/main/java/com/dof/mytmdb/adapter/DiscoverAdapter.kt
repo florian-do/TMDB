@@ -45,7 +45,7 @@ class DiscoverAdapter(val context: Context) : PagedListAdapter<Discover, Discove
 
             holder.binding.root.setOnClickListener {
                 mListener.let {
-                    mListener?.onRowClick(data, holder.binding.cover)
+                    it?.onRowClick(data, holder.binding.cover)
                 }
             }
         }

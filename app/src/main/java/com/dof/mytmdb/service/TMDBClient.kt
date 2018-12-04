@@ -11,6 +11,7 @@ class TMDBClient {
 
         const val DISCOVER_ROUTE : String = "discover/movie"
         const val MOVIE_ROUTE : String = "movie/{movie_id}"
+        const val MOVIE_ROUTE_CREW : String = "movie/{movie_id}/credits"
         const val API_KEY : String = "b4dc27fb266e43bbef9756317657c40f"
     }
 
@@ -26,7 +27,5 @@ class TMDBClient {
             Log.d("Interceptor", request.url().toString())
             return chain.proceed(request)
         }
-
     }
-
 }

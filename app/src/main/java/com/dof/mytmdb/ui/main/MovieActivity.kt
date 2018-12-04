@@ -1,5 +1,6 @@
 package com.dof.mytmdb.ui.main
 
+import android.animation.LayoutTransition
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -24,11 +25,14 @@ import it.sephiroth.android.library.uigestures.UIPanGestureRecognizer
 import kotlinx.android.synthetic.main.activity_movie.*
 import android.support.v4.view.ViewCompat
 import android.support.v4.app.ActivityOptionsCompat
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.dof.mytmdb.App
+import com.dof.mytmdb.afterMeasured
 import com.dof.mytmdb.module.GlideApp
 
 class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
@@ -42,6 +46,8 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
 
     private var movieTitleY : Int = 0
     private var toolbarNotificationHeight : Int = 0
+    private var overviewLines : Int = 0
+    private var isCollapse : Boolean = true
 
     companion object {
         private val THRESHOLD_TOOLBAR = 200F
@@ -81,6 +87,7 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
 
         id = intent.extras.getInt(ARG_ID, 0)
         Log.d(TAG, "ID : ${id}")
+
         viewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
         viewModel.getMovieDetail(id).observe(this, Observer {
             it.let {
@@ -115,7 +122,13 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
             }
         })
 
-        movie_title.viewTreeObserver.addOnGlobalLayoutListener {
+        viewModel.getMovieCrews(id).observe(this, Observer {
+            it.let {
+
+            }
+        })
+
+        movie_title.afterMeasured {
             if (movieTitleY == 0) {
                 val location = intArrayOf(0, 0)
                 movie_title.getLocationOnScreen(location)
@@ -124,6 +137,29 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
 
             if (toolbarNotificationHeight == 0)
                 toolbarNotificationHeight = toolbar.height + resources.getDimension(R.dimen.statusBarHeight).toInt()
+        }
+
+        overview.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (overview.lineCount != 1) {
+                    overview.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    overviewLines = overview.lineCount
+                    overview.setLines(3)
+                    content_root.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+                }
+            }
+        })
+
+        overview_handle.setOnClickListener {
+            if (isCollapse) {
+                overview.setLines(overviewLines)
+                overview_background.setBackgroundResource(0)
+                isCollapse = false
+            } else {
+                overview.setLines(3)
+                overview_background.setBackgroundResource(R.drawable.background_gradient_imageview)
+                isCollapse = true
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -201,7 +237,6 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
             backDrop.scaleY += 0.01F
             backDrop.scaleX += 0.01F
             backDrop.layoutParams.height = defaultHeight + currentYPos.toInt()
-
         }
 
         if (recognizer.state == UIGestureRecognizer.State.Ended) {

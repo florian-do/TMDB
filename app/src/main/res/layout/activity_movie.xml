@@ -84,24 +84,38 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/content_root"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true">
 
-                <ImageView
-                    android:id="@+id/backDrop"
+                <FrameLayout
+                    android:id="@+id/backDropConten"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/ic_launcher_background"
-                    tools:ignore="ContentDescription" />
+                    android:layout_height="350dp">
+
+                    <ImageView
+                        android:id="@+id/backDrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:scaleType="centerCrop"
+                        tools:src="@drawable/ic_launcher_background"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/background_gradient_imageview" />
+
+                </FrameLayout>
 
                 <View
                     android:id="@+id/anchor"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="50dp"
+                    android:layout_marginBottom="75dp"
                     android:background="@color/cardview_dark_background"
-                    app:layout_constraintBottom_toBottomOf="@id/backDrop"/>
+                    app:layout_constraintBottom_toBottomOf="@id/backDropConten"/>
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/header"
@@ -131,27 +145,169 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginTop="8dp"
                         android:text="@{data.original_title}"
                         android:textColor="@color/white"
-                        android:textSize="24sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@id/cardView"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Fantastic Beasts: The Crimes of Grindelwald" />
 
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:text="@{@string/movie_detail_directedby(data.release_date)}"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_color"
+                        app:layout_constraintEnd_toStartOf="@+id/cardView"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/movie_title"
+                        app:layout_constraintBottom_toTopOf="@id/producer"
+                        tools:text="2018 • DIRECTED BY" />
+
+                    <TextView
+                        android:id="@+id/producer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="David Yates"
+                        android:textColor="@color/text_color"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/trailer_button"
+                        app:layout_constraintEnd_toStartOf="@+id/cardView"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView"
+                        tools:text="David Yates" />
+
+                    <View
+                        android:id="@+id/tmp"
+                        android:layout_width="1dp"
+                        android:layout_height="1dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toTopOf="@+id/trailer_button" />
+
+                    <Button
+                        android:id="@+id/trailer_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="25dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/movie_detail_trailer"
+                        android:textColor="@color/text_color"
+                        android:textSize="12sp"
+                        android:background="@drawable/background_play_trailer_button"
+                        android:drawableStart="@drawable/ic_play_arrow"
+                        android:drawablePadding="-10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/text_color"
+                        android:text="@{@string/movie_detail_movie_length(data.runtime)}"
+                        app:layout_constraintTop_toBottomOf="@id/tmp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/trailer_button"
+                        tools:text="134 mins" />
+
                 </android.support.constraint.ConstraintLayout>
 
                 <TextView
+                    android:id="@+id/tagline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@{data.tagline}"
+                    android:textAllCaps="true"
+                    android:textColor="@color/text_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/header"
+                    tools:text="Fate of One. Future of All." />
+
+                <FrameLayout
+                    android:id="@+id/overview_handle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tagline"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp">
+
+                    <TextView
+                        android:id="@+id/overview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:lines="3"
+                        android:text="@{data.overview}"
+                        android:textColor="@color/text_color"
+                        tools:text="@string/tmp"/>
+
+                    <View
+                        android:id="@+id/overview_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/background_gradient_imageview" />
+
+                </FrameLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/crews_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:layout_marginStart="8dp"
-                    android:text="@{data.overview}"
-                    android:textColor="@color/white"
-                    android:textSize="40sp"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@id/header"/>
+                    app:layout_constraintTop_toBottomOf="@id/overview_handle">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/text_color"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="Cast"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_color"
+                        android:padding="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/text_color"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    app:layout_constraintTop_toBottomOf="@+id/crews_content"/>
+
 
             </android.support.constraint.ConstraintLayout>
 
