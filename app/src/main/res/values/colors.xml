@@ -9,5 +9,7 @@
 
     <color name="background">#ee181B20</color>
     <color name="text_color">#B8C9D4</color>
+    <color name="text_second_color">#5D6571</color>
+    <color name="separator">#3A3D42</color>
     <color name="trailer_button_color">#455565</color>
 </resources>

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -25,13 +26,14 @@ import it.sephiroth.android.library.uigestures.UIPanGestureRecognizer
 import kotlinx.android.synthetic.main.activity_movie.*
 import android.support.v4.view.ViewCompat
 import android.support.v4.app.ActivityOptionsCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.dof.mytmdb.App
+import com.dof.mytmdb.adapter.CreditsAdapter
 import com.dof.mytmdb.afterMeasured
 import com.dof.mytmdb.module.GlideApp
 
@@ -48,6 +50,10 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
     private var toolbarNotificationHeight : Int = 0
     private var overviewLines : Int = 0
     private var isCollapse : Boolean = true
+    private var youtubeId = ""
+
+    private val castAdapter = CreditsAdapter()
+    private val crewAdapter = CreditsAdapter()
 
     companion object {
         private val THRESHOLD_TOOLBAR = 200F
@@ -63,7 +69,8 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
                     a, imgView, ViewCompat.getTransitionName(imgView)
             )
 
-            a.startActivity(intent, options.toBundle())
+            a.startActivity(intent)
+//            a.startActivity(intent, options.toBundle())
         }
     }
 
@@ -76,14 +83,14 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
 
         pan = UIPanGestureRecognizer(this)
         pan.actionListener = this
+        root.alpha = 0F
 
-        val imageTransitionName = intent.extras.getString(ARG_TRANSITION)
-        cover.transitionName = imageTransitionName
+//        cover.transitionName = intent.extras.getString(ARG_TRANSITION)
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         window.setStatusBarColor(Color.argb(0, 0, 0, 0));
 
-        delegate.addGestureRecognizer(pan)
+//        delegate.addGestureRecognizer(pan)
 
         id = intent.extras.getInt(ARG_ID, 0)
         Log.d(TAG, "ID : ${id}")
@@ -91,15 +98,16 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
         viewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
         viewModel.getMovieDetail(id).observe(this, Observer {
             it.let {
+                it?.release_date = it!!.release_date.substring(0, it.release_date.indexOf("-"))
                 binding.data = it
+                youtubeId = "5sEaYB4rLFQ"
 
                 GlideApp.with(this)
-                        .load(Const.URL_PHOTO+it?.poster_path)
+                        .load(Const.URL_PHOTO+it.poster_path)
                         .listener(object : RequestListener<Drawable> {
                             override fun onLoadFailed(
                                     e: GlideException?, model: Any?, target: Target<Drawable>?,
                                     isFirstResource: Boolean): Boolean {
-                                supportStartPostponedEnterTransition()
                                 return false
                             }
 
@@ -107,26 +115,44 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
                                     resource: Drawable?, model: Any?,
                                     target: Target<Drawable>?, dataSource: DataSource?,
                                     isFirstResource: Boolean): Boolean {
-                                supportStartPostponedEnterTransition()
+                                dataSuccessfullyLoad()
                                 return false
                             }
                         })
                         .into(cover)
 
                 GlideApp.with(this)
-                        .load(Const.URL_PHOTO_ORIGINAL+it?.backdrop_path)
+                        .load(Const.URL_PHOTO_ORIGINAL+it.backdrop_path)
                         .into(backDrop)
 
-                toolbar_title.text = it?.original_title ?: getString(R.string.app_name)
-                Log.d(TAG, " NAME : ${Const.URL_PHOTO+it?.backdrop_path}")
+                toolbar_title.text = it.original_title ?: getString(R.string.app_name)
+                Log.d(TAG, " NAME : ${Const.URL_PHOTO+it.backdrop_path}")
             }
         })
 
         viewModel.getMovieCrews(id).observe(this, Observer {
             it.let {
-
+                rvFeed.layoutManager = LinearLayoutManager(this)
+                rvFeed.setHasFixedSize(true)
+                rvFeed.isNestedScrollingEnabled = false
+                castAdapter.setData(it?.cast)
+                crewAdapter.setData(it?.crew)
+                rvFeed.adapter = castAdapter
             }
         })
+
+        crewButton.setOnClickListener {
+            rvFeed.swapAdapter(crewAdapter, false)
+        }
+
+        castButton.setOnClickListener {
+            rvFeed.swapAdapter(castAdapter, false)
+        }
+
+        trailer_button.setOnClickListener {
+            val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$youtubeId"))
+            startActivity(appIntent)
+        }
 
         movie_title.afterMeasured {
             if (movieTitleY == 0) {
@@ -201,6 +227,10 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
                 }
             }
         }
+    }
+
+    fun dataSuccessfullyLoad() {
+        root.animate().alpha(1F).setDuration(600L).start()
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
