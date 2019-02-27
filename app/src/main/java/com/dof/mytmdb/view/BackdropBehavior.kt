@@ -24,7 +24,7 @@ class BackdropBehavior : CoordinatorLayout.Behavior<View> {
 
     private val TAG = "BackdropBehavior"
 
-    private var toolbar : Toolbar ?= null
+    private var toolbar : Toolbar?= null
     private var backContainer : View ?= null
     private var child : View ?= null
 
@@ -161,7 +161,7 @@ class BackdropBehavior : CoordinatorLayout.Behavior<View> {
         child.animate().y(position).setDuration(duration).start()
     }
 
-    fun attachBackContainer(@IdRes  backContainerId : Int) {
+    fun attachBackContainer(@IdRes backContainerId : Int) {
         this.backContainerId = backContainerId
     }
 

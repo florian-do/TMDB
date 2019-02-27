@@ -33,6 +33,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.dof.mytmdb.MainActivity
 import com.dof.mytmdb.adapter.CreditsAdapter
 import com.dof.mytmdb.afterMeasured
 import com.dof.mytmdb.module.GlideApp
@@ -61,7 +62,7 @@ class MovieActivity : AppCompatActivity(), UIGestureRecognizerDelegate.Callback,
         private val ARG_ID = "arg_id"
         private val ARG_TRANSITION = "arg_transition"
 
-        fun newActivity(a: Activity, id: Int, imgView : ImageView) {
+        fun newActivity(a: MainActivity, id: Int, imgView : ImageView) {
             val intent = Intent(a, MovieActivity::class.java)
             intent.putExtra(ARG_ID, id)
             intent.putExtra(ARG_TRANSITION, ViewCompat.getTransitionName(imgView))

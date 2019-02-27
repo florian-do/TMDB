@@ -24,7 +24,9 @@ class DiscoverDataSource(val api : DiscoverService) : PageKeyedDataSource<Int, D
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Discover>) {
+        callAPI(1, 1) { _, next ->
 
+        }
     }
 
     private fun callAPI(page: Int, perPage: Int, callback: (repos: List<Discover>, next: Int?) -> Unit) {

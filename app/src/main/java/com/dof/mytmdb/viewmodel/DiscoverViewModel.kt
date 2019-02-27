@@ -10,7 +10,7 @@ import com.dof.mytmdb.service.DiscoverService
 import com.dof.mytmdb.service.model.Discover
 
 class DiscoverViewModel : ViewModel() {
-    val data : LiveData<PagedList<Discover>>
+    var data : LiveData<PagedList<Discover>>
 
     init {
         val config = PagedList.Config.Builder()
